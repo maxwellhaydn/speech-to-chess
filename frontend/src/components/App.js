@@ -1,7 +1,9 @@
 import React from 'react';
 
+import Game from './Game';
+
 const App = (props) => {
-    return <h1>Hello, World!</h1>;
+    return <Game />;
 };
 
 export default App;
