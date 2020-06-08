@@ -78,6 +78,28 @@ describe('Game component', function() {
             expect(mockStartListening).to.have.beenCalledTimes(1);
         });
 
+        it('should show the transcript', function() {
+            jest.mock('react-speech-recognition', () => {
+                return options => {
+                    return component => {
+                        component.defaultProps = {
+                            ...component.defaultProps,
+                            browserSupportsSpeechRecognition: true,
+                            recognition: {},
+                            transcript: 'foo'
+                        };
+                        return component;
+                    };
+                };
+            });
+
+            const Game = require('./Game').default;
+            const wrapper = shallow(<Game />);
+
+            expect(wrapper).to.have.exactly(1).descendants('span');
+            expect(wrapper.find('span')).to.have.text('foo');
+        });
+
     });
 
 });
