@@ -100,6 +100,28 @@ describe('Game component', function() {
             expect(wrapper.find('span')).to.have.text('foo');
         });
 
+        it('should set the speech recognition language to English', function() {
+            const mockRecognitionObj = {};
+
+            jest.mock('react-speech-recognition', () => {
+                return options => {
+                    return component => {
+                        component.defaultProps = {
+                            ...component.defaultProps,
+                            browserSupportsSpeechRecognition: true,
+                            recognition: mockRecognitionObj
+                        };
+                        return component;
+                    };
+                };
+            });
+
+            const Game = require('./Game').default;
+            const wrapper = shallow(<Game />);
+
+            expect(mockRecognitionObj).to.deep.equal({ lang: 'en' });
+        });
+
     });
 
 });
