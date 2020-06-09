@@ -175,8 +175,8 @@ const parser = peg.generate(grammar);
  *     castle queenside         -> O-O-O
  *     white resigns            -> 0-1
  */
-const textToSan = (text) => {
+const textToSAN = (text) => {
     return parser.parse(text);
 };
 
-export default textToSan;
+export default textToSAN;

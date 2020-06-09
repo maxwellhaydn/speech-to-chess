@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 
-import textToSan from './text-to-san';
+import textToSAN from './text-to-san';
 
-describe('textToSan', function() {
+describe('textToSAN', function() {
 
     it.each([
         ['bishop to D7', 'Bd7'],
@@ -25,12 +25,12 @@ describe('textToSan', function() {
         ['castle Queenside', 'O-O-O'],
         ['Black Resigns', '1-0'],
         ['white resigns', '0-1'],
-    ])('textToSan(%j)', (text, expected) => {
-        expect(textToSan(text)).to.equal(expected);
+    ])('textToSAN(%j)', (text, expected) => {
+        expect(textToSAN(text)).to.equal(expected);
     });
 
     it('should throw an error on invalid en passant', function() {
-        expect(() => textToSan('g takes h7 en passant'))
+        expect(() => textToSAN('g takes h7 en passant'))
             .to.throw('Invalid en passant capture');
     });
 
