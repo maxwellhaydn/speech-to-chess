@@ -34,7 +34,7 @@ const Game = ({
             move = textToSAN(transcript);
         }
         catch (error) {
-            move = 'Invalid move';
+            move = `Invalid move: ${transcript}`;
         }
     }
 

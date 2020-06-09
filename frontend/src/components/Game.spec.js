@@ -104,7 +104,33 @@ describe('Game component', function() {
             expect(wrapper.find('span')).to.have.text('Nd4');
         });
 
-        it('should set the speech recognition language to English', function() {
+        it("should handle speech that can't be converted to a valid move", function() {
+            jest.mock('react-speech-recognition', () => {
+                return options => {
+                    return component => {
+                        component.defaultProps = {
+                            ...component.defaultProps,
+                            browserSupportsSpeechRecognition: true,
+                            recognition: {},
+                            transcript: 'foo'
+                        };
+                        return component;
+                    };
+                };
+            });
+
+            jest.mock('../text-to-san', () => {
+                return text => { throw new Error('Invalid') };
+            });
+
+            const Game = require('./Game').default;
+            const wrapper = shallow(<Game />);
+
+            expect(wrapper).to.have.exactly(1).descendants('span');
+            expect(wrapper.find('span')).to.have.text('Invalid move: foo');
+        });
+
+        it('should set the speech recognition language to US English', function() {
             const mockRecognitionObj = {};
 
             jest.mock('react-speech-recognition', () => {
