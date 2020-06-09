@@ -78,7 +78,7 @@ describe('Game component', function() {
             expect(mockStartListening).to.have.beenCalledTimes(1);
         });
 
-        it('should show the transcript', function() {
+        it('should show the speech transcript converted to SAN notation', function() {
             jest.mock('react-speech-recognition', () => {
                 return options => {
                     return component => {
@@ -93,11 +93,15 @@ describe('Game component', function() {
                 };
             });
 
+            jest.mock('../text-to-san', () => {
+                return text => 'Nd4';
+            });
+
             const Game = require('./Game').default;
             const wrapper = shallow(<Game />);
 
             expect(wrapper).to.have.exactly(1).descendants('span');
-            expect(wrapper.find('span')).to.have.text('foo');
+            expect(wrapper.find('span')).to.have.text('Nd4');
         });
 
         it('should set the speech recognition language to English', function() {
