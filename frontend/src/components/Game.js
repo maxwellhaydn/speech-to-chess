@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SpeechRecognition from 'react-speech-recognition';
 
-import textToSAN from '../text-to-san';
+import ChessNLP from 'chess-nlp';
+
+const parser = new ChessNLP();
 
 const propTypes = {
     transcript: PropTypes.string,
@@ -31,7 +33,7 @@ const Game = ({
 
     if (transcript) {
         try {
-            move = textToSAN(transcript);
+            move = parser.toSAN(transcript);
         }
         catch (error) {
             move = `Invalid move: ${transcript}`;

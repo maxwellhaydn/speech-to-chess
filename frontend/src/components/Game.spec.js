@@ -93,8 +93,12 @@ describe('Game component', function() {
                 };
             });
 
-            jest.mock('../text-to-san', () => {
-                return text => 'Nd4';
+            jest.mock('chess-nlp', () => {
+                return jest.fn().mockImplementation(() => {
+                    return {
+                        toSAN: text => 'Nd4'
+                    };
+                });
             });
 
             const Game = require('./Game').default;
@@ -119,8 +123,12 @@ describe('Game component', function() {
                 };
             });
 
-            jest.mock('../text-to-san', () => {
-                return text => { throw new Error('Invalid') };
+            jest.mock('chess-nlp', () => {
+                return jest.fn().mockImplementation(() => {
+                    return {
+                        toSAN: text => { throw new Error('Invalid') }
+                    };
+                });
             });
 
             const Game = require('./Game').default;
