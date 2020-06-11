@@ -115,7 +115,7 @@ describe('Game component', function() {
                             ...component.defaultProps,
                             browserSupportsSpeechRecognition: true,
                             recognition: {},
-                            transcript: 'foo'
+                            finalTranscript: 'foo'
                         };
                         return component;
                     };
@@ -145,7 +145,7 @@ describe('Game component', function() {
                             ...component.defaultProps,
                             browserSupportsSpeechRecognition: true,
                             recognition: {},
-                            transcript: 'foo'
+                            finalTranscript: 'foo'
                         };
                         return component;
                     };

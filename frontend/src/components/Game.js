@@ -7,14 +7,14 @@ import ChessNLP from 'chess-nlp';
 const parser = new ChessNLP();
 
 const propTypes = {
-    transcript: PropTypes.string,
+    finalTranscript: PropTypes.string,
     startListening: PropTypes.func,
     browserSupportsSpeechRecognition: PropTypes.bool,
     recognition: PropTypes.object
 };
 
 const Game = ({
-    transcript,
+    finalTranscript,
     startListening,
     browserSupportsSpeechRecognition,
     recognition
@@ -40,12 +40,12 @@ const Game = ({
 
     let move = '';
 
-    if (transcript) {
+    if (finalTranscript) {
         try {
-            move = parser.toSAN(transcript);
+            move = parser.toSAN(finalTranscript);
         }
         catch (error) {
-            move = `Invalid move: ${transcript}`;
+            move = `Invalid move: ${finalTranscript}`;
         }
     }
 
