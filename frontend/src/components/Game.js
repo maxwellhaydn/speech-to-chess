@@ -27,6 +27,15 @@ const Game = ({
         );
     }
 
+    if (! navigator.onLine) {
+        return (
+            <h2 className="error">
+                You appear to be offline. Speech recognition requires an active
+                internet connection.
+            </h2>
+        );
+    }
+
     recognition.lang = 'en';
 
     let move = '';

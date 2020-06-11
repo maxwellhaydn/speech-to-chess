@@ -51,6 +51,35 @@ describe('Game component', function() {
 
     describe('browserSupportsSpeechRecognition: true', function() {
 
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
+
+        it('should show an error when browser is offline', function() {
+            jest.mock('react-speech-recognition', () => {
+                return options => {
+                    return component => {
+                        component.defaultProps = {
+                            ...component.defaultProps,
+                            browserSupportsSpeechRecognition: true,
+                            recognition: {}
+                        };
+                        return component;
+                    };
+                };
+            });
+
+            jest.spyOn(window, 'navigator', 'get')
+                .mockImplementation(() => ({ onLine: false }));
+
+            const Game = require('./Game').default;
+            const wrapper = shallow(<Game />);
+
+            expect(wrapper).to.have.exactly(1).descendants('.error');
+            expect(wrapper.find('.error').text())
+                .to.match(/You appear to be offline/);
+        });
+
         it('should call startListening on button click', function() {
             const mockStartListening = jest.fn();
 
