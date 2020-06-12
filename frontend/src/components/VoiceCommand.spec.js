@@ -189,6 +189,30 @@ describe('VoiceCommand component', function() {
             expect(mockRecognitionObj).to.deep.equal({ lang: 'en-US' });
         });
 
+        it('should call the given onChange handler when the transcript changes', function() {
+            const mockOnChange = jest.fn();
+
+            jest.mock('react-speech-recognition', () => {
+                return options => {
+                    return component => {
+                        component.defaultProps = {
+                            ...component.defaultProps,
+                            browserSupportsSpeechRecognition: true,
+                            recognition: {}
+                        };
+                        return component;
+                    };
+                };
+            });
+
+            const VoiceCommand = require('./VoiceCommand').default;
+            const wrapper = shallow(<VoiceCommand onChange={mockOnChange} />);
+
+            wrapper.find('.latest-move').simulate('change');
+
+            expect(mockOnChange).to.have.beenCalledTimes(1);
+        });
+
     });
 
 });

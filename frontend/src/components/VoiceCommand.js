@@ -16,7 +16,8 @@ const propTypes = {
     finalTranscript: PropTypes.string,
     startListening: PropTypes.func,
     browserSupportsSpeechRecognition: PropTypes.bool,
-    recognition: PropTypes.object
+    recognition: PropTypes.object,
+    onChange: PropTypes.func
 };
 
 /**
@@ -26,7 +27,8 @@ const VoiceCommand = ({
     finalTranscript,
     startListening,
     browserSupportsSpeechRecognition,
-    recognition
+    recognition,
+    onChange
 }) => {
     if (! browserSupportsSpeechRecognition) {
         return (
@@ -62,7 +64,12 @@ const VoiceCommand = ({
     return (
         <div className="game">
             <button onClick={startListening}>Move</button>
-            <span className="latest-move">{move}</span>
+            <span
+                className="latest-move"
+                onChange={() => onChange()}
+            >
+                {move}
+            </span>
             {errorMessage && <span className="error">{errorMessage}</span>}
         </div>
     );
