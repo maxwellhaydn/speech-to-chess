@@ -19,7 +19,10 @@ const propTypes = {
     recognition: PropTypes.object
 };
 
-const Game = ({
+/**
+ * Transcribe voice commands to text.
+ */
+const VoiceCommand = ({
     finalTranscript,
     startListening,
     browserSupportsSpeechRecognition,
@@ -65,11 +68,11 @@ const Game = ({
     );
 };
 
-Game.propTypes = propTypes;
+VoiceCommand.propTypes = propTypes;
 
 const options = {
     autoStart: false,
     continuous: false
 };
 
-export default SpeechRecognition(options)(Game);
+export default SpeechRecognition(options)(VoiceCommand);

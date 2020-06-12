@@ -1,9 +1,9 @@
 import React from 'react';
 
-import Game from './Game';
+import VoiceCommand from './VoiceCommand';
 
 const App = (props) => {
-    return <Game />;
+    return <VoiceCommand />;
 };
 
 export default App;

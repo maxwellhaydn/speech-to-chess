@@ -2,15 +2,15 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { expect } from 'chai';
 
-describe('Game component', function() {
+describe('VoiceCommand component', function() {
 
     beforeEach(() => {
         /**
          * Reset modules so we can mock the SpeechRecognition HOC differently in
          * different tests. For example, the property
-         * browserSupportsSpeechRecognition is normally set once when the Game
-         * module is imported, but we want to run tests that emulate both
-         * supported and non-supported browsers.
+         * browserSupportsSpeechRecognition is normally set once when the
+         * VoiceCommand module is imported, but we want to run tests that
+         * emulate both supported and non-supported browsers.
          *
          * See
          *
@@ -39,8 +39,8 @@ describe('Game component', function() {
                 };
             });
 
-            const Game = require('./Game').default;
-            const wrapper = shallow(<Game />);
+            const VoiceCommand = require('./VoiceCommand').default;
+            const wrapper = shallow(<VoiceCommand />);
 
             expect(wrapper).to.have.exactly(1).descendants('.error');
             expect(wrapper.find('.error'))
@@ -72,8 +72,8 @@ describe('Game component', function() {
             jest.spyOn(window, 'navigator', 'get')
                 .mockImplementation(() => ({ onLine: false }));
 
-            const Game = require('./Game').default;
-            const wrapper = shallow(<Game />);
+            const VoiceCommand = require('./VoiceCommand').default;
+            const wrapper = shallow(<VoiceCommand />);
 
             expect(wrapper).to.have.exactly(1).descendants('.error');
             expect(wrapper.find('.error').text())
@@ -97,8 +97,8 @@ describe('Game component', function() {
                 };
             });
 
-            const Game = require('./Game').default;
-            const wrapper = shallow(<Game />);
+            const VoiceCommand = require('./VoiceCommand').default;
+            const wrapper = shallow(<VoiceCommand />);
 
             expect(wrapper).to.have.exactly(1).descendants('button');
 
@@ -130,8 +130,8 @@ describe('Game component', function() {
                 });
             });
 
-            const Game = require('./Game').default;
-            const wrapper = shallow(<Game />);
+            const VoiceCommand = require('./VoiceCommand').default;
+            const wrapper = shallow(<VoiceCommand />);
 
             expect(wrapper).to.have.exactly(1).descendants('.latest-move');
             expect(wrapper.find('.latest-move')).to.have.text('Nd4');
@@ -160,8 +160,8 @@ describe('Game component', function() {
                 });
             });
 
-            const Game = require('./Game').default;
-            const wrapper = shallow(<Game />);
+            const VoiceCommand = require('./VoiceCommand').default;
+            const wrapper = shallow(<VoiceCommand />);
 
             expect(wrapper).to.have.exactly(1).descendants('.error');
             expect(wrapper.find('.error')).to.have.text('Invalid move: foo');
@@ -183,8 +183,8 @@ describe('Game component', function() {
                 };
             });
 
-            const Game = require('./Game').default;
-            const wrapper = shallow(<Game />);
+            const VoiceCommand = require('./VoiceCommand').default;
+            const wrapper = shallow(<VoiceCommand />);
 
             expect(mockRecognitionObj).to.deep.equal({ lang: 'en-US' });
         });
