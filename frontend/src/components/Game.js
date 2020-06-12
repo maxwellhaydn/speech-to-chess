@@ -4,7 +4,13 @@ import SpeechRecognition from 'react-speech-recognition';
 
 import ChessNLP from 'chess-nlp';
 
-const parser = new ChessNLP();
+const parserOptions = {
+    aliases: {
+        knight: ['night']
+    }
+};
+
+const parser = new ChessNLP(parserOptions);
 
 const propTypes = {
     finalTranscript: PropTypes.string,
