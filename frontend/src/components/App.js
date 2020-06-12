@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
+import Chess from './Chess';
 import VoiceCommand from './VoiceCommand';
 
 const App = (props) => {
-    return <VoiceCommand />;
+    const chessAPIRef = useRef(null);
+
+    return (
+        <div className="app">
+            <VoiceCommand />
+            <Chess apiRef={chessAPIRef} />
+        </div>
+    );
 };
 
 export default App;
