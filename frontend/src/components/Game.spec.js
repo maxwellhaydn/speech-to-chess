@@ -133,8 +133,8 @@ describe('Game component', function() {
             const Game = require('./Game').default;
             const wrapper = shallow(<Game />);
 
-            expect(wrapper).to.have.exactly(1).descendants('span');
-            expect(wrapper.find('span')).to.have.text('Nd4');
+            expect(wrapper).to.have.exactly(1).descendants('.latest-move');
+            expect(wrapper.find('.latest-move')).to.have.text('Nd4');
         });
 
         it("should handle speech that can't be converted to a valid move", function() {
@@ -163,8 +163,8 @@ describe('Game component', function() {
             const Game = require('./Game').default;
             const wrapper = shallow(<Game />);
 
-            expect(wrapper).to.have.exactly(1).descendants('span');
-            expect(wrapper.find('span')).to.have.text('Invalid move: foo');
+            expect(wrapper).to.have.exactly(1).descendants('.error');
+            expect(wrapper.find('.error')).to.have.text('Invalid move: foo');
         });
 
         it('should set the speech recognition language to US English', function() {

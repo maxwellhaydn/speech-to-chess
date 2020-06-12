@@ -44,21 +44,23 @@ const Game = ({
 
     recognition.lang = 'en-US';
 
-    let move = '';
+    let move = '',
+        errorMessage;
 
     if (finalTranscript) {
         try {
             move = parser.toSAN(finalTranscript);
         }
         catch (error) {
-            move = `Invalid move: ${finalTranscript}`;
+            errorMessage = `Invalid move: ${finalTranscript}`;
         }
     }
 
     return (
         <div className="game">
             <button onClick={startListening}>Move</button>
-            <span>{move}</span>
+            <span className="latest-move">{move}</span>
+            {errorMessage && <span className="error">{errorMessage}</span>}
         </div>
     );
 };
