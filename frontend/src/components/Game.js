@@ -36,7 +36,7 @@ const Game = ({
         );
     }
 
-    recognition.lang = 'en';
+    recognition.lang = 'en-US';
 
     let move = '';
 

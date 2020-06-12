@@ -186,7 +186,7 @@ describe('Game component', function() {
             const Game = require('./Game').default;
             const wrapper = shallow(<Game />);
 
-            expect(mockRecognitionObj).to.deep.equal({ lang: 'en' });
+            expect(mockRecognitionObj).to.deep.equal({ lang: 'en-US' });
         });
 
     });
