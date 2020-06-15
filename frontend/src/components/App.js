@@ -52,6 +52,8 @@ const App = (props) => {
     const { speak, voices } = useSpeechSynthesis();
 
     const handleVoiceCommand = useCallback((command) => {
+        const speechSynthesisVoice =
+            voices.find(voice => voice.lang === 'en-US');
         let move;
 
         try {
@@ -62,6 +64,12 @@ const App = (props) => {
                 message: 'Not a chess move',
                 details: command
             });
+
+            speak({
+                text: `I don't understand: ${command}`,
+                voice: speechSynthesisVoice
+            });
+
             return;
         }
 
@@ -71,20 +79,35 @@ const App = (props) => {
 
             speak({
                 text: command,
-                voice: voices.find(voice => voice.lang === 'en-US')
+                voice: speechSynthesisVoice
             });
 
             if (chessApiRef.current.game_over()) {
                 setStatus({ message: 'Game over' });
+
+                speak({
+                    text: 'Game over',
+                    voice: speechSynthesisVoice
+                });
             }
             else {
                 setStatus({ message: turn() });
+
+                speak({
+                    text: turn(),
+                    voice: speechSynthesisVoice
+                });
             }
         }
         else {
             setStatus({ message: 'Illegal move', details: move });
+
+            speak({
+                text: `Illegal move: ${command}`,
+                voice: speechSynthesisVoice
+            });
         }
-    }, [chessApiRef, setMoves, setStatus, speak, turn]);
+    }, [chessApiRef, setMoves, setStatus, speak, turn, voices]);
 
     const {
         listen,
