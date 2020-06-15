@@ -107,66 +107,6 @@ describe('VoiceCommand component', function() {
             expect(mockStartListening).to.have.beenCalledTimes(1);
         });
 
-        it('should show the speech transcript converted to SAN notation', function() {
-            jest.mock('react-speech-recognition', () => {
-                return options => {
-                    return component => {
-                        component.defaultProps = {
-                            ...component.defaultProps,
-                            browserSupportsSpeechRecognition: true,
-                            recognition: {},
-                            finalTranscript: 'foo'
-                        };
-                        return component;
-                    };
-                };
-            });
-
-            jest.mock('chess-nlp', () => {
-                return jest.fn().mockImplementation(() => {
-                    return {
-                        toSAN: text => 'Nd4'
-                    };
-                });
-            });
-
-            const VoiceCommand = require('./VoiceCommand').default;
-            const wrapper = shallow(<VoiceCommand />);
-
-            expect(wrapper).to.have.exactly(1).descendants('.latest-move');
-            expect(wrapper.find('.latest-move')).to.have.text('Nd4');
-        });
-
-        it("should handle speech that can't be converted to a valid move", function() {
-            jest.mock('react-speech-recognition', () => {
-                return options => {
-                    return component => {
-                        component.defaultProps = {
-                            ...component.defaultProps,
-                            browserSupportsSpeechRecognition: true,
-                            recognition: {},
-                            finalTranscript: 'foo'
-                        };
-                        return component;
-                    };
-                };
-            });
-
-            jest.mock('chess-nlp', () => {
-                return jest.fn().mockImplementation(() => {
-                    return {
-                        toSAN: text => { throw new Error('Invalid') }
-                    };
-                });
-            });
-
-            const VoiceCommand = require('./VoiceCommand').default;
-            const wrapper = shallow(<VoiceCommand />);
-
-            expect(wrapper).to.have.exactly(1).descendants('.error');
-            expect(wrapper.find('.error')).to.have.text('Invalid move: foo');
-        });
-
         it('should set the speech recognition language to US English', function() {
             const mockRecognitionObj = {};
 

@@ -1,23 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SpeechRecognition from 'react-speech-recognition';
-
-import ChessNLP from 'chess-nlp';
-
-const parserOptions = {
-    aliases: {
-        knight: ['night']
-    }
-};
-
-const parser = new ChessNLP(parserOptions);
 
 const propTypes = {
     finalTranscript: PropTypes.string,
     startListening: PropTypes.func,
     browserSupportsSpeechRecognition: PropTypes.bool,
     recognition: PropTypes.object,
-    onChange: PropTypes.func
+    onCommand: PropTypes.func
 };
 
 /**
@@ -28,8 +18,14 @@ const VoiceCommand = ({
     startListening,
     browserSupportsSpeechRecognition,
     recognition,
-    onChange
+    onCommand
 }) => {
+    useEffect(() => {
+        if (finalTranscript) {
+            onCommand(finalTranscript);
+        }
+    }, [finalTranscript, onCommand]);
+
     if (! browserSupportsSpeechRecognition) {
         return (
             <h2 className="error">
@@ -49,28 +45,9 @@ const VoiceCommand = ({
 
     recognition.lang = 'en-US';
 
-    let move = '',
-        errorMessage;
-
-    if (finalTranscript) {
-        try {
-            move = parser.toSAN(finalTranscript);
-        }
-        catch (error) {
-            errorMessage = `Invalid move: ${finalTranscript}`;
-        }
-    }
-
     return (
-        <div className="game">
-            <button onClick={startListening}>Move</button>
-            <span
-                className="latest-move"
-                onChange={() => onChange()}
-            >
-                {move}
-            </span>
-            {errorMessage && <span className="error">{errorMessage}</span>}
+        <div className="voice-command">
+            <button onClick={startListening}>Issue voice command</button>
         </div>
     );
 };
