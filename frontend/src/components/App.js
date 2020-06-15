@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { useSpeechRecognition } from 'react-speech-kit';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useSpeechRecognition, useSpeechSynthesis } from 'react-speech-kit';
 import { isNode } from 'browser-or-node';
 import ChessNLP from 'chess-nlp';
 import Chessboard from 'chessboardjsx';
@@ -49,6 +49,8 @@ const App = (props) => {
 
     const [status, setStatus] = useState({ message: turn() });
 
+    const { speak, voices } = useSpeechSynthesis();
+
     const handleVoiceCommand = useCallback((command) => {
         let move;
 
@@ -57,7 +59,7 @@ const App = (props) => {
         }
         catch (error) {
             setStatus({
-                message: "I couldn't understand what you said",
+                message: 'Not a chess move',
                 details: command
             });
             return;
@@ -66,6 +68,11 @@ const App = (props) => {
         if (chessApiRef.current.move(move)) {
             setMoves(chessApiRef.current.history());
             setPosition(chessApiRef.current.fen());
+
+            speak({
+                text: command,
+                voice: voices.find(voice => voice.lang === 'en-US')
+            });
 
             if (chessApiRef.current.game_over()) {
                 setStatus({ message: 'Game over' });
@@ -77,16 +84,24 @@ const App = (props) => {
         else {
             setStatus({ message: 'Illegal move', details: move });
         }
-    }, [chessApiRef, setMoves, setStatus, turn]);
+    }, [chessApiRef, setMoves, setStatus, speak, turn]);
 
-    const { listen, listening, supported } = useSpeechRecognition({
+    const {
+        listen,
+        listening,
+        stop: stopListening,
+        supported: speechRecognitionSupported
+    } = useSpeechRecognition({
         onResult: handleVoiceCommand
     });
 
-    if (! supported) {
+    // Stop listening for voice commands when status changes
+    useEffect(stopListening, [status]);
+
+    if (! speechRecognitionSupported) {
         return (
             <h2 className="error">
-                Your browser doesn't support speech recognition
+                Your browser doesn't support speech recognition.
             </h2>
         );
     }
@@ -96,6 +111,7 @@ const App = (props) => {
             <Chessboard position={position} />
             <button
                 onClick={() => listen({ interimResults: false, lang: 'en-US' })}
+                disabled={listening}
             >
                 {listening ? 'Listening' : 'Move'}
             </button>
