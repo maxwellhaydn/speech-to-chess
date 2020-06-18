@@ -1,30 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useSpeechRecognition, useSpeechSynthesis } from 'react-speech-kit';
-import { isNode } from 'browser-or-node';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSpeechRecognition } from 'react-speech-kit';
+import useChess from 'react-chess.js';
 import ChessNLP from 'chess-nlp';
 import Chessboard from 'chessboardjsx';
 
-import GameStatusIndicator from './GameStatusIndicator';
+import GameStatus from './GameStatus';
 import MoveHistoryTable from './MoveHistoryTable';
-
-let Chess;
-
-/**
- * In CommonJS environments, chess.js exports an object with the Chess
- * constructor as a property, while on AMD environments it exports the Chess
- * constructor directly. Webpack supports both CommonJS and AMD. Due to an issue
- * in chess.js (https://github.com/jhlywa/chess.js/issues/196), you get the AMD
- * export with Webpack, so tests running in Node and code bundled with Webpack
- * cannot both use the same import signature. The following is a temporary
- * workaround until the issue in chess.js is resolved.
- */
-if (isNode) {
-    const chess = require('chess.js');
-    Chess = chess.Chess;
-}
-else {
-    Chess = require('chess.js');
-}
 
 const parserOptions = {
     aliases: {
@@ -38,76 +19,50 @@ const parser = new ChessNLP(parserOptions);
  * A chess game played with voice commands.
  */
 const App = (props) => {
-    const chessApiRef = useRef(new Chess());
-    const [moves, setMoves] = useState([]);
-    const [position, setPosition] = useState(chessApiRef.current.fen());
+    const [status, setStatus] = useState();
 
-    const turn = useCallback(() => {
-        const player = chessApiRef.current.turn() === 'b' ? 'Black' : 'White';
-        return `${player} to move`;
-    }, [chessApiRef]);
+    const handleLegalMove = (move) => {
+        setStatus(`Moved ${move}`);
+    };
 
-    const [status, setStatus] = useState({ message: turn() });
+    const handleIllegalMove = (move) => {
+        setStatus(`Illegal move: ${move}`);
+    };
 
-    const { speak, voices } = useSpeechSynthesis();
+    const handleGameOver = () => {
+        setStatus('Game over');
+    };
+
+    const { move: makeMove, undo, reset, history, fen } = useChess({
+        onLegalMove: handleLegalMove,
+        onIllegalMove: handleIllegalMove,
+        onGameOver: handleGameOver
+    });
 
     const handleVoiceCommand = useCallback((command) => {
-        const speechSynthesisVoice =
-            voices.find(voice => voice.lang === 'en-US');
-        let move;
+        switch (command) {
+            case 'undo':
+                undo();
+                setStatus('Undid last move');
+                return;
+            case 'reset':
+                reset();
+                setStatus('Reset game');
+                return;
+            default:
+                let move;
 
-        try {
-            move = parser.toSAN(command);
+                try {
+                    move = parser.toSAN(command);
+                }
+                catch (error) {
+                    setStatus(`I don't understand: ${command}`);
+                    return;
+                }
+
+                makeMove(move);
         }
-        catch (error) {
-            setStatus({
-                message: 'Not a chess move',
-                details: command
-            });
-
-            speak({
-                text: `I don't understand: ${command}`,
-                voice: speechSynthesisVoice
-            });
-
-            return;
-        }
-
-        if (chessApiRef.current.move(move)) {
-            setMoves(chessApiRef.current.history());
-            setPosition(chessApiRef.current.fen());
-
-            speak({
-                text: command,
-                voice: speechSynthesisVoice
-            });
-
-            if (chessApiRef.current.game_over()) {
-                setStatus({ message: 'Game over' });
-
-                speak({
-                    text: 'Game over',
-                    voice: speechSynthesisVoice
-                });
-            }
-            else {
-                setStatus({ message: turn() });
-
-                speak({
-                    text: turn(),
-                    voice: speechSynthesisVoice
-                });
-            }
-        }
-        else {
-            setStatus({ message: 'Illegal move', details: move });
-
-            speak({
-                text: `Illegal move: ${command}`,
-                voice: speechSynthesisVoice
-            });
-        }
-    }, [chessApiRef, setMoves, setStatus, speak, turn, voices]);
+    }, [makeMove, reset, undo]);
 
     const {
         listen,
@@ -131,18 +86,15 @@ const App = (props) => {
 
     return (
         <div className="app">
-            <Chessboard position={position} />
+            <Chessboard position={fen} />
             <button
                 onClick={() => listen({ interimResults: false, lang: 'en-US' })}
                 disabled={listening}
             >
                 {listening ? 'Listening' : 'Move'}
             </button>
-            <MoveHistoryTable moves={moves} />
-            <GameStatusIndicator
-                status={status.message}
-                details={status.details}
-            />
+            <MoveHistoryTable moves={history} />
+            <GameStatus status={status} />
         </div>
     );
 };
