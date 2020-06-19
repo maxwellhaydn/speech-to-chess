@@ -88,6 +88,7 @@ const App = (props) => {
         <div className="app">
             <Chessboard position={fen} />
             <button
+                className="voice-command-button"
                 onClick={() => listen({ interimResults: false, lang: 'en-US' })}
                 disabled={listening}
             >
