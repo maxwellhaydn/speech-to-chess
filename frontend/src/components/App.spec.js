@@ -216,6 +216,66 @@ describe('App component', function() {
             });
         });
 
+        it('should reset the game on reset command', function() {
+            useSpeechRecognition.mockImplementation(({ onResult }) => ({
+                supported: true,
+                listen: jest.fn().mockImplementationOnce(
+                    () => onResult('reset')
+                )
+            }));
+
+            const mockReset = jest.fn();
+
+            useChess.mockReturnValue({
+                history: [],
+                fen: 'foo',
+                reset: mockReset
+            });
+
+            jest.isolateModules(() => {
+                const App = require('./App').default;
+                const wrapper = shallow(<App />);
+
+                wrapper.find('.voice-command-button').simulate('click');
+
+                expect(mockReset).to.have.beenCalledTimes(1);
+                expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
+                expect(wrapper).to.contain(<GameStatus status="Reset game"/>);
+                expect(wrapper).to.contain(<Chessboard position="foo" />);
+            });
+        });
+
+        it('should undo the last move on undo command', function() {
+            useSpeechRecognition.mockImplementation(({ onResult }) => ({
+                supported: true,
+                listen: jest.fn().mockImplementationOnce(
+                    () => onResult('undo')
+                )
+            }));
+
+            const mockUndo = jest.fn();
+
+            useChess.mockReturnValue({
+                history: [],
+                fen: 'foo',
+                undo: mockUndo
+            });
+
+            jest.isolateModules(() => {
+                const App = require('./App').default;
+                const wrapper = shallow(<App />);
+
+                wrapper.find('.voice-command-button').simulate('click');
+
+                expect(mockUndo).to.have.beenCalledTimes(1);
+                expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
+                expect(wrapper).to.contain(
+                    <GameStatus status="Undid last move"/>
+                );
+                expect(wrapper).to.contain(<Chessboard position="foo" />);
+            });
+        });
+
     });
 
 });
