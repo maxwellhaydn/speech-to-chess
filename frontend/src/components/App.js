@@ -9,7 +9,16 @@ import MoveHistoryTable from './MoveHistoryTable';
 
 const parserOptions = {
     aliases: {
-        knight: ['night']
+        knight: ['night'],
+        rook: ['brooke', 'brook'],
+        a: ['alpha'],
+        b: ['bravo'],
+        c: ['charlie'],
+        d: ['delta'],
+        e: ['echo'],
+        f: ['foxtrot'],
+        g: ['golf'],
+        h: ['hotel']
     }
 };
 
