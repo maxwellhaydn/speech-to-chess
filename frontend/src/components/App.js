@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSpeechRecognition } from 'react-speech-kit';
 import useChess from 'react-chess.js';
 import ChessNLP from 'chess-nlp';
@@ -82,9 +82,6 @@ const App = (props) => {
         onResult: handleVoiceCommand
     });
 
-    // Stop listening for voice commands when status changes
-    useEffect(stopListening, [status]);
-
     if (! speechRecognitionSupported) {
         return (
             <h2 className="error">
@@ -98,8 +95,10 @@ const App = (props) => {
             <Chessboard position={fen} />
             <button
                 className="voice-command-button"
-                onClick={() => listen({ interimResults: false, lang: 'en-US' })}
-                disabled={listening}
+                onPointerDown={
+                    () => listen({ interimResults: false, lang: 'en-US' })
+                }
+                onPointerUp={stopListening}
             >
                 {listening ? 'Listening' : 'Move'}
             </button>

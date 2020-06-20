@@ -1,7 +1,7 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import { expect } from 'chai';
-import { useSpeechRecognition } from 'react-speech-kit';
+import { useSpeechRecognition, useSpeechSynthesis } from 'react-speech-kit';
 import useChess from 'react-chess.js';
 import Chessboard from 'chessboardjsx';
 
@@ -74,9 +74,56 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
+                expect(wrapper.find('.voice-command-button'))
+                    .to.have.text('Move');
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
                 expect(wrapper).to.contain(<GameStatus />);
                 expect(wrapper).to.contain(<Chessboard position="foo" />);
+            });
+        });
+
+        it('should change the move button text while listening', function() {
+            useSpeechRecognition.mockReturnValue({
+                supported: true,
+                listening: true
+            });
+
+            useChess.mockReturnValue({
+                history: [],
+                fen: 'foo'
+            });
+
+            jest.isolateModules(() => {
+                const App = require('./App').default;
+                const wrapper = shallow(<App />);
+
+                expect(wrapper.find('.voice-command-button'))
+                    .to.have.text('Listening');
+            });
+        });
+
+        it('should stop listening when the user releases the move button', function() {
+            const mockStopListening = jest.fn();
+
+            useSpeechRecognition.mockReturnValue({
+                supported: true,
+                stop: mockStopListening
+            });
+
+            useChess.mockReturnValue({
+                history: [],
+                fen: 'foo'
+            });
+
+            jest.isolateModules(() => {
+                const App = require('./App').default;
+                const wrapper = shallow(<App />);
+
+                const button = wrapper.find('.voice-command-button');
+                button.simulate('pointerUp');
+
+                expect(button).to.have.text('Move');
+                expect(mockStopListening).to.have.beenCalledTimes(1);
             });
         });
 
@@ -103,7 +150,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('click');
+                wrapper.find('.voice-command-button').simulate('pointerDown');
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={['e4']} />);
                 expect(wrapper).to.contain(<GameStatus status="Moved e4" />);
@@ -135,7 +182,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('click');
+                wrapper.find('.voice-command-button').simulate('pointerDown');
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
                 expect(wrapper).to.contain(
@@ -172,7 +219,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('click');
+                wrapper.find('.voice-command-button').simulate('pointerDown');
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
                 expect(wrapper).to.contain(
@@ -208,7 +255,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('click');
+                wrapper.find('.voice-command-button').simulate('pointerDown');
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={['e4']} />);
                 expect(wrapper).to.contain(<GameStatus status="Game over" />);
@@ -236,7 +283,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('click');
+                wrapper.find('.voice-command-button').simulate('pointerDown');
 
                 expect(mockReset).to.have.beenCalledTimes(1);
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
@@ -265,7 +312,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('click');
+                wrapper.find('.voice-command-button').simulate('pointerDown');
 
                 expect(mockUndo).to.have.beenCalledTimes(1);
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
