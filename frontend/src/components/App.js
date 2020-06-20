@@ -3,6 +3,13 @@ import { useSpeechRecognition } from 'react-speech-kit';
 import useChess from 'react-chess.js';
 import ChessNLP from 'chess-nlp';
 import Chessboard from 'chessboardjsx';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 
 import GameStatus from './GameStatus';
 import MoveHistoryTable from './MoveHistoryTable';
@@ -91,20 +98,32 @@ const App = (props) => {
     }
 
     return (
-        <div className="app">
-            <Chessboard position={fen} />
-            <button
-                className="voice-command-button"
-                onPointerDown={
-                    () => listen({ interimResults: false, lang: 'en-US' })
-                }
-                onPointerUp={stopListening}
-            >
-                {listening ? 'Listening' : 'Move'}
-            </button>
-            <MoveHistoryTable moves={history} />
-            <GameStatus status={status} />
-        </div>
+        <Container className="app" fluid>
+            <Row>
+                <Col xs={12} sm>
+                    <Chessboard
+                        position={fen}
+                        calcWidth={({ screenWidth, screenHeight }) => {
+                            return screenHeight * 0.9;
+                        }}
+                    />
+                </Col>
+                <Col xs={12} sm>
+                    <Button
+                        className="voice-command-button"
+                        onPointerDown={() => {
+                            listen({ interimResults: false, lang: 'en-US' });
+                        }}
+                        onPointerUp={stopListening}
+                        block
+                    >
+                        {listening ? 'Listening' : 'Hold for voice command'}
+                    </Button>
+                    <GameStatus status={status} />
+                    <MoveHistoryTable moves={history} />
+                </Col>
+            </Row>
+        </Container>
     );
 };
 

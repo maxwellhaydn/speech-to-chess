@@ -75,10 +75,12 @@ describe('App component', function() {
                 const wrapper = shallow(<App />);
 
                 expect(wrapper.find('.voice-command-button'))
-                    .to.have.text('Move');
+                    .to.have.text('Hold for voice command');
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
                 expect(wrapper).to.contain(<GameStatus />);
-                expect(wrapper).to.contain(<Chessboard position="foo" />);
+                expect(wrapper).to.containMatchingElement(
+                    <Chessboard position="foo" />
+                );
             });
         });
 
@@ -122,7 +124,7 @@ describe('App component', function() {
                 const button = wrapper.find('.voice-command-button');
                 button.simulate('pointerUp');
 
-                expect(button).to.have.text('Move');
+                expect(button).to.have.text('Hold for voice command');
                 expect(mockStopListening).to.have.beenCalledTimes(1);
             });
         });
@@ -154,7 +156,9 @@ describe('App component', function() {
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={['e4']} />);
                 expect(wrapper).to.contain(<GameStatus status="Moved e4" />);
-                expect(wrapper).to.contain(<Chessboard position="foo" />);
+                expect(wrapper).to.containMatchingElement(
+                    <Chessboard position="foo" />
+                );
             });
         });
 
@@ -188,7 +192,9 @@ describe('App component', function() {
                 expect(wrapper).to.contain(
                     <GameStatus status="I don't understand: foo" />
                 );
-                expect(wrapper).to.contain(<Chessboard position="foo" />);
+                expect(wrapper).to.containMatchingElement(
+                    <Chessboard position="foo" />
+                );
             });
         });
 
@@ -225,7 +231,9 @@ describe('App component', function() {
                 expect(wrapper).to.contain(
                     <GameStatus status="Illegal move: Kh8"
                 />);
-                expect(wrapper).to.contain(<Chessboard position="foo" />);
+                expect(wrapper).to.containMatchingElement(
+                    <Chessboard position="foo" />
+                );
             });
         });
 
@@ -259,7 +267,9 @@ describe('App component', function() {
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={['e4']} />);
                 expect(wrapper).to.contain(<GameStatus status="Game over" />);
-                expect(wrapper).to.contain(<Chessboard position="foo" />);
+                expect(wrapper).to.containMatchingElement(
+                    <Chessboard position="foo" />
+                );
             });
         });
 
@@ -288,7 +298,9 @@ describe('App component', function() {
                 expect(mockReset).to.have.beenCalledTimes(1);
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
                 expect(wrapper).to.contain(<GameStatus status="Reset game"/>);
-                expect(wrapper).to.contain(<Chessboard position="foo" />);
+                expect(wrapper).to.containMatchingElement(
+                    <Chessboard position="foo" />
+                );
             });
         });
 
@@ -319,7 +331,9 @@ describe('App component', function() {
                 expect(wrapper).to.contain(
                     <GameStatus status="Undid last move"/>
                 );
-                expect(wrapper).to.contain(<Chessboard position="foo" />);
+                expect(wrapper).to.containMatchingElement(
+                    <Chessboard position="foo" />
+                );
             });
         });
 
