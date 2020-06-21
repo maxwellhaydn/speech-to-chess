@@ -14,18 +14,23 @@ import './App.css';
 import GameStatus from './GameStatus';
 import MoveHistoryTable from './MoveHistoryTable';
 
+// Add aliases for sounds that Google Chrome's Web Speech API implementation
+// often gets wrong
 const parserOptions = {
     aliases: {
         knight: ['night'],
         rook: ['brooke', 'brook'],
         a: ['alpha'],
-        b: ['bravo'],
-        c: ['charlie'],
+        b: ['bravo', 'bee', 'be'],
+        c: ['charlie', 'sea', 'see'],
         d: ['delta'],
         e: ['echo'],
         f: ['foxtrot'],
         g: ['golf'],
-        h: ['hotel']
+        h: ['hotel'],
+        2: ['too'],
+        4: ['force'],
+        5: ['v'],
     }
 };
 
