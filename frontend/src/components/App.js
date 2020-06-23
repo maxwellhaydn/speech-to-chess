@@ -29,7 +29,7 @@ const parserOptions = {
         g: ['golf'],
         h: ['hotel'],
         2: ['too'],
-        4: ['force'],
+        4: ['force', 'for'],
         5: ['v'],
     }
 };
