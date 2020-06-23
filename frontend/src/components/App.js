@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useSpeechRecognition } from 'react-speech-kit';
 import useChess from 'react-chess.js';
 import ChessNLP from 'chess-nlp';
-import Chessboard from 'chessboardjsx';
+import Chessboard from 'react-simple-chessboard';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
@@ -106,12 +106,7 @@ const App = (props) => {
         <Container className="app" fluid>
             <Row>
                 <Col xs={12} sm>
-                    <Chessboard
-                        position={fen}
-                        calcWidth={({ screenWidth, screenHeight }) => {
-                            return screenHeight * 0.9;
-                        }}
-                    />
+                    <Chessboard position={fen} />
                 </Col>
                 <Col xs={12} sm>
                     <Button
