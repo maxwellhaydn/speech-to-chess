@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { expect } from 'chai';
 import { useSpeechRecognition, useSpeechSynthesis } from 'react-speech-kit';
 import useChess from 'react-chess.js';
-import Chessboard from 'chessboardjsx';
+import Chessboard from 'react-simple-chessboard';
 
 import GameStatus from './GameStatus';
 import MoveHistoryTable from './MoveHistoryTable';

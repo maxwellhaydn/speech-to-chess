@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useSpeechRecognition } from 'react-speech-kit';
 import useChess from 'react-chess.js';
 import ChessNLP from 'chess-nlp';
-import Chessboard from 'chessboardjsx';
+import Chessboard from 'react-simple-chessboard';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
@@ -14,18 +14,23 @@ import './App.css';
 import GameStatus from './GameStatus';
 import MoveHistoryTable from './MoveHistoryTable';
 
+// Add aliases for sounds that Google Chrome's Web Speech API implementation
+// often gets wrong
 const parserOptions = {
     aliases: {
         knight: ['night'],
         rook: ['brooke', 'brook'],
         a: ['alpha'],
-        b: ['bravo'],
-        c: ['charlie'],
+        b: ['bravo', 'bee', 'be'],
+        c: ['charlie', 'sea', 'see'],
         d: ['delta'],
         e: ['echo'],
         f: ['foxtrot'],
         g: ['golf'],
-        h: ['hotel']
+        h: ['hotel'],
+        2: ['too'],
+        4: ['force', 'for'],
+        5: ['v'],
     }
 };
 
@@ -101,12 +106,7 @@ const App = (props) => {
         <Container className="app" fluid>
             <Row>
                 <Col xs={12} sm>
-                    <Chessboard
-                        position={fen}
-                        calcWidth={({ screenWidth, screenHeight }) => {
-                            return screenHeight * 0.9;
-                        }}
-                    />
+                    <Chessboard position={fen} />
                 </Col>
                 <Col xs={12} sm>
                     <Button
