@@ -1,5 +1,6 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { act } from 'react-dom/test-utils';
+import { mount, shallow } from 'enzyme';
 import { expect } from 'chai';
 import { useSpeechRecognition, useSpeechSynthesis } from 'react-speech-kit';
 import useChess from 'react-chess.js';
@@ -60,6 +61,10 @@ describe('App component', function() {
 
     describe('speech recognition is supported', function() {
 
+        beforeEach(function() {
+            jest.useFakeTimers();
+        });
+
         it('should show an empty moves table on initial render', function() {
             useSpeechRecognition.mockReturnValue({
                 supported: true
@@ -75,7 +80,7 @@ describe('App component', function() {
                 const wrapper = shallow(<App />);
 
                 expect(wrapper.find('.voice-command-button'))
-                    .to.have.text('Hold for voice command');
+                    .to.have.text('Click to give voice command');
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
                 expect(wrapper).to.contain(<GameStatus />);
                 expect(wrapper).to.containMatchingElement(
@@ -104,12 +109,19 @@ describe('App component', function() {
             });
         });
 
-        it('should stop listening when the user releases the move button', function() {
+        it('should stop listening after 5 seconds with no command', function() {
+            const mockListen = jest.fn();
             const mockStopListening = jest.fn();
 
             useSpeechRecognition.mockReturnValue({
                 supported: true,
+                listen: mockListen,
                 stop: mockStopListening
+            });
+
+            useSpeechSynthesis.mockReturnValue({
+                speak: jest.fn(),
+                voices: [{ lang: 'en-US' }]
             });
 
             useChess.mockReturnValue({
@@ -119,12 +131,28 @@ describe('App component', function() {
 
             jest.isolateModules(() => {
                 const App = require('./App').default;
-                const wrapper = shallow(<App />);
+                const wrapper = mount(<App />);
 
-                const button = wrapper.find('.voice-command-button');
-                button.simulate('pointerUp');
+                // Use "button.voice-command-button" instead of just
+                // "voice-command-button" to get around this Enzyme feature:
+                // https://github.com/enzymejs/enzyme/issues/1174
+                const button = wrapper.find('button.voice-command-button');
 
-                expect(button).to.have.text('Hold for voice command');
+                expect(mockListen).to.not.have.beenCalled();
+                expect(mockStopListening).to.not.have.beenCalled();
+
+                act(() => {
+                    button.simulate('click');
+                });
+
+                expect(mockListen).to.have.beenCalledTimes(1);
+                expect(mockStopListening).to.not.have.beenCalled();
+
+                act(() => {
+                    jest.advanceTimersByTime(5000);
+                });
+
+                expect(mockListen).to.have.beenCalledTimes(1);
                 expect(mockStopListening).to.have.beenCalledTimes(1);
             });
         });
@@ -152,7 +180,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('pointerDown');
+                wrapper.find('.voice-command-button').simulate('click');
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={['e4']} />);
                 expect(wrapper).to.contain(<GameStatus status="Moved e4" />);
@@ -186,7 +214,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('pointerDown');
+                wrapper.find('.voice-command-button').simulate('click');
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
                 expect(wrapper).to.contain(
@@ -225,7 +253,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('pointerDown');
+                wrapper.find('.voice-command-button').simulate('click');
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
                 expect(wrapper).to.contain(
@@ -263,7 +291,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('pointerDown');
+                wrapper.find('.voice-command-button').simulate('click');
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={['e4']} />);
                 expect(wrapper).to.contain(<GameStatus status="Game over" />);
@@ -293,7 +321,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('pointerDown');
+                wrapper.find('.voice-command-button').simulate('click');
 
                 expect(mockReset).to.have.beenCalledTimes(1);
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
@@ -324,7 +352,7 @@ describe('App component', function() {
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('pointerDown');
+                wrapper.find('.voice-command-button').simulate('click');
 
                 expect(mockUndo).to.have.beenCalledTimes(1);
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
