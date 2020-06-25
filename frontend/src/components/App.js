@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSpeechRecognition } from 'react-speech-kit';
 import useChess from 'react-chess.js';
 import ChessNLP from 'chess-nlp';
@@ -41,6 +41,9 @@ const parser = new ChessNLP(parserOptions);
  */
 const App = (props) => {
     const [status, setStatus] = useState();
+    const [waitingForVoiceCommand, setWaitingForVoiceCommand] = useState(false);
+    const voiceCommandTimeout = useRef(null);
+    const stopListeningRef = useRef(null);
 
     const handleLegalMove = (move) => {
         setStatus(`Moved ${move}`);
@@ -61,6 +64,8 @@ const App = (props) => {
     });
 
     const handleVoiceCommand = useCallback((command) => {
+        setWaitingForVoiceCommand(false);
+
         switch (command) {
             case 'undo':
                 undo();
@@ -94,6 +99,39 @@ const App = (props) => {
         onResult: handleVoiceCommand
     });
 
+    // Workaround for issue in react-speech-kit to make sure we always have the
+    // latest version of the callback to stop listening
+    // https://github.com/MikeyParton/react-speech-kit/issues/31
+    useEffect(() => {
+        stopListeningRef.current = stopListening;
+    }, [stopListening]);
+
+    // When we recognize that the user has issued a new voice command, cancel
+    // the voice command timeout and stop listening
+    useEffect(() => {
+        if (listening && ! waitingForVoiceCommand) {
+            clearTimeout(voiceCommandTimeout.current);
+            stopListening();
+        }
+    }, [listening, stopListening, voiceCommandTimeout, waitingForVoiceCommand]);
+
+    const handleClick = useCallback(() => {
+        // Cancel current active timeout. If there isn't one, this will
+        // silently do nothing
+        clearTimeout(voiceCommandTimeout.current);
+
+        setWaitingForVoiceCommand(true);
+
+        // Give the user 5 seconds to say something after pushing the voice
+        // command button
+        voiceCommandTimeout.current = setTimeout(() => {
+             stopListeningRef.current();
+             setWaitingForVoiceCommand(false);
+        }, 5000);
+
+        listen({ interimResults: false, lang: 'en-US' });
+    }, [listen, stopListeningRef, voiceCommandTimeout]);
+
     if (! speechRecognitionSupported) {
         return (
             <h2 className="error">
@@ -111,13 +149,11 @@ const App = (props) => {
                 <Col xs={12} sm>
                     <Button
                         className="voice-command-button"
-                        onPointerDown={() => {
-                            listen({ interimResults: false, lang: 'en-US' });
-                        }}
-                        onPointerUp={stopListening}
+                        onClick={handleClick}
+                        disabled={listening}
                         block
                     >
-                        {listening ? 'Listening' : 'Hold for voice command'}
+                        {listening ? 'Listening' : 'Click to give voice command'}
                     </Button>
                     <GameStatus status={status} />
                     <MoveHistoryTable moves={history} />
