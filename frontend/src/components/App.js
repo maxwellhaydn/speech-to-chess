@@ -20,20 +20,21 @@ const parserOptions = {
     aliases: {
         knight: ['night'],
         rook: [
-            'brooke', 'brooks', 'brook', 'work', 'route', 'rough', 'ruck',
-            'rupp', 'rupt', 'rocket', 'rock', 'rug'
+            'brooke', 'brooks', 'brookdale', 'brook', 'work', 'route', 'rough',
+            'trucks', 'truck', 'ruck', 'rupp', 'rupt', 'rocket', 'rockstar',
+            'rock', 'rugs', 'rug', 'look'
         ],
-        a: ['alpha'],
+        a: ['alpha', 'office', 'off of', 'also'],
         b: ['bravo', 'beta', 'beat', 'bee', 'be'],
         c: ['charlie', 'sea', 'see'],
         d: ['delta', 'the'],
         e: ['echo', 'eat'],
         f: ['foxtrot', 'at', 'of'],
         g: ['golf', 'gulf'],
-        h: ['hotel'],
+        h: ['hotel', 'stage', 'age', 'its', 'each'],
         2: ['too'],
-        4: ['force', 'for', 'far', 'park'],
-        5: ['v'],
+        4: ['force', 'for', 'far', 'park', 'store'],
+        5: ['v', 'psi'],
         6: ['sex'],
     }
 };
