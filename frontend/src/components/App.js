@@ -19,18 +19,23 @@ import MoveHistoryTable from './MoveHistoryTable';
 const parserOptions = {
     aliases: {
         knight: ['night'],
-        rook: ['brooke', 'brook'],
-        a: ['alpha'],
-        b: ['bravo', 'bee', 'be'],
+        rook: [
+            'brooke', 'brooks', 'brookdale', 'brook', 'work', 'route', 'rough',
+            'trucks', 'truck', 'ruck', 'rupp', 'rupt', 'rocket', 'rockstar',
+            'rock', 'rugs', 'rug', 'look'
+        ],
+        a: ['alpha', 'office', 'off of', 'also'],
+        b: ['bravo', 'beta', 'beat', 'bee', 'be'],
         c: ['charlie', 'sea', 'see'],
-        d: ['delta'],
-        e: ['echo'],
-        f: ['foxtrot'],
-        g: ['golf'],
-        h: ['hotel'],
+        d: ['delta', 'the'],
+        e: ['echo', 'eat'],
+        f: ['foxtrot', 'at', 'of'],
+        g: ['golf', 'gulf'],
+        h: ['hotel', 'stage', 'age', 'its', 'each'],
         2: ['too'],
-        4: ['force', 'for'],
-        5: ['v'],
+        4: ['force', 'for', 'far', 'park', 'store'],
+        5: ['v', 'psi'],
+        6: ['sex'],
     }
 };
 
