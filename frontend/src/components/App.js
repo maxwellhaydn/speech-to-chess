@@ -20,8 +20,8 @@ const parserOptions = {
     aliases: {
         knight: ['night'],
         rook: [
-            'brooke', 'brook', 'work', 'route', 'rough', 'ruck', 'rupp', 'rupt',
-            'rock', 'rug'
+            'brooke', 'brooks', 'brook', 'work', 'route', 'rough', 'ruck',
+            'rupp', 'rupt', 'rocket', 'rock', 'rug'
         ],
         a: ['alpha'],
         b: ['bravo', 'beta', 'beat', 'bee', 'be'],
