@@ -3,14 +3,15 @@ import PropTypes from 'prop-types';
 import { useSpeechSynthesis } from 'react-speech-kit';
 
 const propTypes = {
-    status: PropTypes.string
+    display: PropTypes.string,
+    announce: PropTypes.string
 };
 
 /**
  * Show the current status of the game (e.g. "Black to move", "Checkmate")
  * and say it out loud with text-to-speech.
  */
-const GameStatus = ({ status }) => {
+const GameStatus = ({ display, announce }) => {
     const { speak, voices } = useSpeechSynthesis();
     const voice = useMemo(() => {
         return voices.find(voice => voice.lang === 'en-US');
@@ -18,12 +19,12 @@ const GameStatus = ({ status }) => {
 
     // When status changes, say the new status out loud
     useEffect(() => {
-        if (status) speak({ text: status, voice });
-    }, [status]);
+        if (announce) speak({ text: announce, voice });
+    }, [announce]);
 
     return (
         <div className="game-status">
-            {status && <h2>{status}</h2>}
+            {display && <h2>{display}</h2>}
         </div>
     );
 };
