@@ -22,8 +22,9 @@ const parserOptions = {
         rook: [
             'brooke', 'brooks', 'brookdale', 'brook', 'work', 'route', 'rough',
             'trucks', 'truck', 'ruck', 'rupp', 'rupt', 'rocket', 'rockstar',
-            'rock', 'rugs', 'rug', 'look'
+            'rock', 'rugs', 'rug', 'look', 'ruff'
         ],
+        king: ['teen'],
         a: ['alpha', 'office', 'off of', 'also'],
         b: ['bravo', 'beta', 'beat', 'bee', 'be'],
         c: ['charlie', 'sea', 'see'],
@@ -33,7 +34,7 @@ const parserOptions = {
         g: ['golf', 'gulf'],
         h: ['hotel', 'stage', 'age', 'its', 'each'],
         2: ['too'],
-        4: ['force', 'for', 'far', 'park', 'store'],
+        4: ['force', 'for', 'far', 'park', 'store', 'fork'],
         5: ['v', 'psi'],
         6: ['sex'],
     }
