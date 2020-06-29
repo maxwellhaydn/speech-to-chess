@@ -160,20 +160,21 @@ describe('App component', function() {
         it('should make a move when a valid voice command is given', function() {
             useSpeechRecognition.mockImplementation(({ onResult }) => ({
                 supported: true,
-                listen: jest.fn().mockImplementationOnce(() => onResult('e4'))
+                listen: jest.fn().mockImplementationOnce(() => onResult('Nf3'))
             }));
 
             useChess.mockImplementation(({ onLegalMove }) => ({
-                history: ['e4'],
+                history: ['Nf3'],
                 fen: 'foo',
-                move: jest.fn().mockImplementationOnce(() => onLegalMove('e4'))
+                move: jest.fn().mockImplementationOnce(() => onLegalMove('Nf3'))
             }));
 
             jest.isolateModules(() => {
                 jest.doMock('chess-nlp', () => ({
                     __esModule: true,
                     default: jest.fn(() => ({
-                        toSAN: text => 'e4'
+                        textToSan: text => 'Nf3',
+                        sanToText: san => 'knight to f3'
                     }))
                 }));
 
@@ -182,8 +183,13 @@ describe('App component', function() {
 
                 wrapper.find('.voice-command-button').simulate('click');
 
-                expect(wrapper).to.contain(<MoveHistoryTable moves={['e4']} />);
-                expect(wrapper).to.contain(<GameStatus status="Moved e4" />);
+                expect(wrapper).to.contain(<MoveHistoryTable moves={['Nf3']} />);
+                expect(wrapper).to.contain(
+                    <GameStatus
+                        display="Moved Nf3"
+                        announce="Moved knight to f3"
+                    />
+                );
                 expect(wrapper).to.containMatchingElement(
                     <Chessboard position="foo" />
                 );
@@ -207,7 +213,7 @@ describe('App component', function() {
                 jest.doMock('chess-nlp', () => ({
                     __esModule: true,
                     default: jest.fn(() => ({
-                        toSAN: text => { throw new Error('unparseable'); }
+                        textToSan: text => { throw new Error('unparseable'); }
                     }))
                 }));
 
@@ -218,7 +224,10 @@ describe('App component', function() {
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
                 expect(wrapper).to.contain(
-                    <GameStatus status="I don't understand: foo" />
+                    <GameStatus
+                        display="I don't understand: foo"
+                        announce="I don't understand: foo"
+                    />
                 );
                 expect(wrapper).to.containMatchingElement(
                     <Chessboard position="foo" />
@@ -246,7 +255,8 @@ describe('App component', function() {
                 jest.doMock('chess-nlp', () => ({
                     __esModule: true,
                     default: jest.fn(() => ({
-                        toSAN: text => 'Kh8'
+                        textToSan: text => 'Kh8',
+                        sanToText: san => 'king to h8'
                     }))
                 }));
 
@@ -257,8 +267,11 @@ describe('App component', function() {
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
                 expect(wrapper).to.contain(
-                    <GameStatus status="Illegal move: Kh8"
-                />);
+                    <GameStatus
+                        display="Illegal move: Kh8"
+                        announce="Illegal move: king to h8"
+                    />
+                );
                 expect(wrapper).to.containMatchingElement(
                     <Chessboard position="foo" />
                 );
@@ -284,7 +297,8 @@ describe('App component', function() {
                 jest.doMock('chess-nlp', () => ({
                     __esModule: true,
                     default: jest.fn(() => ({
-                        toSAN: text => 'e4'
+                        textToSan: text => 'e4',
+                        sanToText: text => 'e4'
                     }))
                 }));
 
@@ -294,7 +308,12 @@ describe('App component', function() {
                 wrapper.find('.voice-command-button').simulate('click');
 
                 expect(wrapper).to.contain(<MoveHistoryTable moves={['e4']} />);
-                expect(wrapper).to.contain(<GameStatus status="Game over" />);
+                expect(wrapper).to.contain(
+                    <GameStatus
+                        display="Game over"
+                        announce="Game over"
+                    />
+                );
                 expect(wrapper).to.containMatchingElement(
                     <Chessboard position="foo" />
                 );
@@ -325,7 +344,12 @@ describe('App component', function() {
 
                 expect(mockReset).to.have.beenCalledTimes(1);
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
-                expect(wrapper).to.contain(<GameStatus status="Reset game"/>);
+                expect(wrapper).to.contain(
+                    <GameStatus
+                        display="Reset game"
+                        announce="Reset game"
+                    />
+                );
                 expect(wrapper).to.containMatchingElement(
                     <Chessboard position="foo" />
                 );
@@ -357,7 +381,10 @@ describe('App component', function() {
                 expect(mockUndo).to.have.beenCalledTimes(1);
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
                 expect(wrapper).to.contain(
-                    <GameStatus status="Undid last move"/>
+                    <GameStatus
+                        display="Undid last move"
+                        announce="Undid last move"
+                    />
                 );
                 expect(wrapper).to.containMatchingElement(
                     <Chessboard position="foo" />

@@ -45,21 +45,27 @@ const parser = new ChessNLP(parserOptions);
  * A chess game played with voice commands.
  */
 const App = (props) => {
-    const [status, setStatus] = useState();
+    const [status, setStatus] = useState({});
     const [waitingForVoiceCommand, setWaitingForVoiceCommand] = useState(false);
     const voiceCommandTimeout = useRef(null);
     const stopListeningRef = useRef(null);
 
     const handleLegalMove = (move) => {
-        setStatus(`Moved ${move}`);
+        const moveDesc = parser.sanToText(move);
+        setStatus({ display: `Moved ${move}`, announce: `Moved ${moveDesc}` });
     };
 
     const handleIllegalMove = (move) => {
-        setStatus(`Illegal move: ${move}`);
+        const moveDesc = parser.sanToText(move);
+        setStatus({
+            display: `Illegal move: ${move}`,
+            announce: `Illegal move: ${moveDesc}`
+        });
     };
 
     const handleGameOver = () => {
-        setStatus('Game over');
+        const status = 'Game over';
+        setStatus({ display: status, announce: status });
     };
 
     const { move: makeMove, undo, reset, history, fen } = useChess({
@@ -69,25 +75,29 @@ const App = (props) => {
     });
 
     const handleVoiceCommand = useCallback((command) => {
+        let status;
         setWaitingForVoiceCommand(false);
 
         switch (command) {
             case 'undo':
                 undo();
-                setStatus('Undid last move');
+                status = 'Undid last move';
+                setStatus({ display: status, announce: status });
                 return;
             case 'reset':
                 reset();
-                setStatus('Reset game');
+                status = 'Reset game';
+                setStatus({ display: status, announce: status });
                 return;
             default:
                 let move;
 
                 try {
-                    move = parser.toSAN(command);
+                    move = parser.textToSan(command);
                 }
                 catch (error) {
-                    setStatus(`I don't understand: ${command}`);
+                    status = `I don't understand: ${command}`;
+                    setStatus({ display: status, announce: status });
                     return;
                 }
 
@@ -160,7 +170,7 @@ const App = (props) => {
                     >
                         {listening ? 'Listening' : 'Click to give voice command'}
                     </Button>
-                    <GameStatus status={status} />
+                    <GameStatus {...status} />
                     <MoveHistoryTable moves={history} />
                 </Col>
             </Row>

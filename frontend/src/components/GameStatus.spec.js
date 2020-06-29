@@ -18,13 +18,13 @@ describe('GameStatus component', function() {
     beforeEach(() => jest.clearAllMocks());
 
     it('should show the current status', function() {
-        const wrapper = shallow(<GameStatus status="foo" />);
+        const wrapper = shallow(<GameStatus display="foo" />);
 
         expect(wrapper.find('.game-status')).to.have.text('foo');
     });
 
     it('should show nothing if status is not set', function() {
-        const wrapper = shallow(<GameStatus status={null} />);
+        const wrapper = shallow(<GameStatus display={null} />);
 
         expect(wrapper).to.be.empty;
     });
@@ -32,7 +32,7 @@ describe('GameStatus component', function() {
     it('should say the new status when status changes', function() {
         const wrapper = mount(<GameStatus />);
 
-        wrapper.setProps({ status: 'foo' });
+        wrapper.setProps({ announce: 'foo' });
 
         expect(mockSpeak).to.have.beenCalledWith({
             text: 'foo',
@@ -41,7 +41,7 @@ describe('GameStatus component', function() {
     });
 
     it('should say nothing when status becomes falsy', function() {
-        const wrapper = mount(<GameStatus status="foo" />);
+        const wrapper = mount(<GameStatus announce="foo" />);
 
         // mockSpeak is called once on initial render; clear the mock so we can
         // test if it's called again after changing the status prop
