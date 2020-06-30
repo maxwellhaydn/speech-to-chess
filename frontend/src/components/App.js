@@ -69,10 +69,28 @@ const App = (props) => {
         setStatus({ display: status, announce: status });
     };
 
+    const handleStalemate = () => {
+        const status = 'Stalemate';
+        setStatus({ display: status, announce: status });
+    };
+
+    const handleThreefoldRepetition = () => {
+        const status = 'Draw due to threefold repetition';
+        setStatus({ display: status, announce: status });
+    };
+
+    const handleInsufficientMaterial = () => {
+        const status = 'Draw due to insufficient material';
+        setStatus({ display: status, announce: status });
+    };
+
     const { move: makeMove, undo, reset, history, fen } = useChess({
         onLegalMove: handleLegalMove,
         onIllegalMove: handleIllegalMove,
-        onGameOver: handleGameOver
+        onGameOver: handleGameOver,
+        onStalemate: handleStalemate,
+        onThreefoldRepetition: handleThreefoldRepetition,
+        onInsufficientMaterial: handleInsufficientMaterial,
     });
 
     const handleVoiceCommand = useCallback((command) => {
