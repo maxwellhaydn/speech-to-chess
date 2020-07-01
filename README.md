@@ -37,6 +37,10 @@ Table of Contents
 speech-to-chess currently only works in Google Chrome (on desktop and Android).
 Support for other browsers will be added in future releases.
 
+speech-to-chess only works when you have an active internet connection. If you
+are giving voice commands but getting no response, it may be that your internet
+connection is down or the quality is poor.
+
 ## How to play
 
 To make a move, click the button labelled "Click to give voice command" and say
