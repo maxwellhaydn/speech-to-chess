@@ -82,7 +82,7 @@ describe('App component', function() {
                 expect(wrapper.find('.voice-command-button'))
                     .to.have.text('Click to give voice command');
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
-                expect(wrapper).to.contain(<GameStatus />);
+                expect(wrapper).to.contain(<GameStatus moveNumber={0} />);
                 expect(wrapper).to.containMatchingElement(
                     <Chessboard position="foo" />
                 );
@@ -188,6 +188,7 @@ describe('App component', function() {
                     <GameStatus
                         display="Moved Nf3"
                         announce="Moved knight to f3"
+                        moveNumber={1}
                     />
                 );
                 expect(wrapper).to.containMatchingElement(
@@ -227,6 +228,7 @@ describe('App component', function() {
                     <GameStatus
                         display="I don't understand: foo"
                         announce="I don't understand: foo"
+                        moveNumber={0}
                     />
                 );
                 expect(wrapper).to.containMatchingElement(
@@ -270,6 +272,7 @@ describe('App component', function() {
                     <GameStatus
                         display="Illegal move: Kh8"
                         announce="Illegal move: king to h8"
+                        moveNumber={0}
                     />
                 );
                 expect(wrapper).to.containMatchingElement(
@@ -312,6 +315,7 @@ describe('App component', function() {
                     <GameStatus
                         display="Game over"
                         announce="Game over"
+                        moveNumber={1}
                     />
                 );
                 expect(wrapper).to.containMatchingElement(
@@ -354,6 +358,7 @@ describe('App component', function() {
                     <GameStatus
                         display="Stalemate"
                         announce="Stalemate"
+                        moveNumber={1}
                     />
                 );
                 expect(wrapper).to.containMatchingElement(
@@ -396,6 +401,7 @@ describe('App component', function() {
                     <GameStatus
                         display="Draw due to threefold repetition"
                         announce="Draw due to threefold repetition"
+                        moveNumber={1}
                     />
                 );
                 expect(wrapper).to.containMatchingElement(
@@ -438,6 +444,7 @@ describe('App component', function() {
                     <GameStatus
                         display="Draw due to insufficient material"
                         announce="Draw due to insufficient material"
+                        moveNumber={1}
                     />
                 );
                 expect(wrapper).to.containMatchingElement(
@@ -474,6 +481,7 @@ describe('App component', function() {
                     <GameStatus
                         display="Reset game"
                         announce="Reset game"
+                        moveNumber={0}
                     />
                 );
                 expect(wrapper).to.containMatchingElement(
@@ -483,26 +491,46 @@ describe('App component', function() {
         });
 
         it('should undo the last move on undo command', function() {
+            const mockUndo = jest.fn();
+            const commands = ['e4', 'undo'];
+
             useSpeechRecognition.mockImplementation(({ onResult }) => ({
                 supported: true,
-                listen: jest.fn().mockImplementationOnce(
-                    () => onResult('undo')
-                )
-            }));
+                listen: jest.fn(() => onResult(commands.shift()))
+            }))
 
-            const mockUndo = jest.fn();
-
-            useChess.mockReturnValue({
+            useChess.mockImplementation(({ onLegalMove }) => ({
                 history: [],
                 fen: 'foo',
+                move: jest.fn().mockImplementationOnce(() => onLegalMove('e4')),
                 undo: mockUndo
-            });
+            }))
 
             jest.isolateModules(() => {
+                jest.doMock('chess-nlp', () => ({
+                    __esModule: true,
+                    default: jest.fn(() => ({
+                        textToSan: text => 'e4',
+                        sanToText: san => 'e4'
+                    }))
+                }));
+
                 const App = require('./App').default;
                 const wrapper = shallow(<App />);
 
-                wrapper.find('.voice-command-button').simulate('click');
+                // e4
+                act(() => {
+                    wrapper.find('.voice-command-button').simulate('click');
+                });
+
+                wrapper.update();
+
+                // undo
+                act(() => {
+                    wrapper.find('.voice-command-button').simulate('click');
+                });
+
+                wrapper.update();
 
                 expect(mockUndo).to.have.beenCalledTimes(1);
                 expect(wrapper).to.contain(<MoveHistoryTable moves={[]} />);
@@ -510,6 +538,7 @@ describe('App component', function() {
                     <GameStatus
                         display="Undid last move"
                         announce="Undid last move"
+                        moveNumber={0}
                     />
                 );
                 expect(wrapper).to.containMatchingElement(
