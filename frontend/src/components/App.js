@@ -22,8 +22,9 @@ const parserOptions = {
         rook: [
             'brooke', 'brooks', 'brookdale', 'brook', 'work', 'route', 'rough',
             'trucks', 'truck', 'ruck', 'rupp', 'rupt', 'rocket', 'rockstar',
-            'rock', 'rugs', 'rug', 'look'
+            'rock', 'rugs', 'rug', 'look', 'ruff'
         ],
+        king: ['teen'],
         a: ['alpha', 'office', 'off of', 'also'],
         b: ['bravo', 'beta', 'beat', 'bee', 'be'],
         c: ['charlie', 'sea', 'see'],
@@ -33,7 +34,7 @@ const parserOptions = {
         g: ['golf', 'gulf'],
         h: ['hotel', 'stage', 'age', 'its', 'each'],
         2: ['too'],
-        4: ['force', 'for', 'far', 'park', 'store'],
+        4: ['force', 'for', 'far', 'park', 'store', 'fork'],
         5: ['v', 'psi'],
         6: ['sex'],
     }
@@ -68,10 +69,28 @@ const App = (props) => {
         setStatus({ display: status, announce: status });
     };
 
+    const handleStalemate = () => {
+        const status = 'Stalemate';
+        setStatus({ display: status, announce: status });
+    };
+
+    const handleThreefoldRepetition = () => {
+        const status = 'Draw due to threefold repetition';
+        setStatus({ display: status, announce: status });
+    };
+
+    const handleInsufficientMaterial = () => {
+        const status = 'Draw due to insufficient material';
+        setStatus({ display: status, announce: status });
+    };
+
     const { move: makeMove, undo, reset, history, fen } = useChess({
         onLegalMove: handleLegalMove,
         onIllegalMove: handleIllegalMove,
-        onGameOver: handleGameOver
+        onGameOver: handleGameOver,
+        onStalemate: handleStalemate,
+        onThreefoldRepetition: handleThreefoldRepetition,
+        onInsufficientMaterial: handleInsufficientMaterial,
     });
 
     const handleVoiceCommand = useCallback((command) => {

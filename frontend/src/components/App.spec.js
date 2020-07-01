@@ -320,6 +320,132 @@ describe('App component', function() {
             });
         });
 
+        it('should show a message on stalemate', function() {
+            useSpeechRecognition.mockImplementation(({ onResult }) => ({
+                supported: true,
+                listen: jest.fn().mockImplementationOnce(() => onResult('e4'))
+            }));
+
+            useChess.mockImplementation(({ onLegalMove, onStalemate }) => ({
+                history: ['e4'],
+                fen: 'foo',
+                move: jest.fn().mockImplementationOnce(() => {
+                    onLegalMove('e4');
+                    onStalemate();
+                })
+            }));
+
+            jest.isolateModules(() => {
+                jest.doMock('chess-nlp', () => ({
+                    __esModule: true,
+                    default: jest.fn(() => ({
+                        textToSan: text => 'e4',
+                        sanToText: text => 'e4'
+                    }))
+                }));
+
+                const App = require('./App').default;
+                const wrapper = shallow(<App />);
+
+                wrapper.find('.voice-command-button').simulate('click');
+
+                expect(wrapper).to.contain(<MoveHistoryTable moves={['e4']} />);
+                expect(wrapper).to.contain(
+                    <GameStatus
+                        display="Stalemate"
+                        announce="Stalemate"
+                    />
+                );
+                expect(wrapper).to.containMatchingElement(
+                    <Chessboard position="foo" />
+                );
+            });
+        });
+
+        it('should show a message on threefold repetition', function() {
+            useSpeechRecognition.mockImplementation(({ onResult }) => ({
+                supported: true,
+                listen: jest.fn().mockImplementationOnce(() => onResult('e4'))
+            }));
+
+            useChess.mockImplementation(({ onLegalMove, onThreefoldRepetition }) => ({
+                history: ['e4'],
+                fen: 'foo',
+                move: jest.fn().mockImplementationOnce(() => {
+                    onLegalMove('e4');
+                    onThreefoldRepetition();
+                })
+            }));
+
+            jest.isolateModules(() => {
+                jest.doMock('chess-nlp', () => ({
+                    __esModule: true,
+                    default: jest.fn(() => ({
+                        textToSan: text => 'e4',
+                        sanToText: text => 'e4'
+                    }))
+                }));
+
+                const App = require('./App').default;
+                const wrapper = shallow(<App />);
+
+                wrapper.find('.voice-command-button').simulate('click');
+
+                expect(wrapper).to.contain(<MoveHistoryTable moves={['e4']} />);
+                expect(wrapper).to.contain(
+                    <GameStatus
+                        display="Draw due to threefold repetition"
+                        announce="Draw due to threefold repetition"
+                    />
+                );
+                expect(wrapper).to.containMatchingElement(
+                    <Chessboard position="foo" />
+                );
+            });
+        });
+
+        it('should show a message on insufficient material', function() {
+            useSpeechRecognition.mockImplementation(({ onResult }) => ({
+                supported: true,
+                listen: jest.fn().mockImplementationOnce(() => onResult('e4'))
+            }));
+
+            useChess.mockImplementation(({ onLegalMove, onInsufficientMaterial }) => ({
+                history: ['e4'],
+                fen: 'foo',
+                move: jest.fn().mockImplementationOnce(() => {
+                    onLegalMove('e4');
+                    onInsufficientMaterial();
+                })
+            }));
+
+            jest.isolateModules(() => {
+                jest.doMock('chess-nlp', () => ({
+                    __esModule: true,
+                    default: jest.fn(() => ({
+                        textToSan: text => 'e4',
+                        sanToText: text => 'e4'
+                    }))
+                }));
+
+                const App = require('./App').default;
+                const wrapper = shallow(<App />);
+
+                wrapper.find('.voice-command-button').simulate('click');
+
+                expect(wrapper).to.contain(<MoveHistoryTable moves={['e4']} />);
+                expect(wrapper).to.contain(
+                    <GameStatus
+                        display="Draw due to insufficient material"
+                        announce="Draw due to insufficient material"
+                    />
+                );
+                expect(wrapper).to.containMatchingElement(
+                    <Chessboard position="foo" />
+                );
+            });
+        });
+
         it('should reset the game on reset command', function() {
             useSpeechRecognition.mockImplementation(({ onResult }) => ({
                 supported: true,
