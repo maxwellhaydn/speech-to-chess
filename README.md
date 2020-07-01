@@ -7,7 +7,7 @@ it only supports human vs. human play with both players using the same browser
 (i.e. both players must be in the same room using the same computer). In the
 future it will support play over the internet.
 
-Try it out at https://speech-to-chess.com! (Requires Chrome browser.)
+Try it out at https://speech-to-chess.com! _(Requires Chrome browser.)_
 
 Table of Contents
 =================
