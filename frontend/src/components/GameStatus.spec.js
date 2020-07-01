@@ -52,4 +52,14 @@ describe('GameStatus component', function() {
         expect(mockSpeak).to.not.have.beenCalled();
     });
 
+    it('should say the status again when the move number changes', function() {
+        const wrapper = mount(<GameStatus moveNumber={1} announce="foo" />);
+
+        expect(mockSpeak).to.have.beenCalledTimes(1);
+
+        wrapper.setProps({ moveNumber: 2 });
+
+        expect(mockSpeak).to.have.beenCalledTimes(2);
+    });
+
 });

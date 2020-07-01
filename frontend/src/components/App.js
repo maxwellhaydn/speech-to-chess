@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useSpeechRecognition } from 'react-speech-kit';
 import useChess from 'react-chess.js';
 import ChessNLP from 'chess-nlp';
@@ -34,7 +35,7 @@ const parserOptions = {
         g: ['golf', 'gulf'],
         h: ['hotel', 'stage', 'age', 'its', 'each'],
         2: ['too'],
-        4: ['force', 'for', 'far', 'park', 'store', 'fork'],
+        4: ['force', 'for', 'far', 'park', 'store', 'fork', 'ford', 'fort'],
         5: ['v', 'psi'],
         6: ['sex'],
     }
@@ -46,14 +47,26 @@ const parser = new ChessNLP(parserOptions);
  * A chess game played with voice commands.
  */
 const App = (props) => {
+    const INITIAL_MOVE_NUMBER = 0;
     const [status, setStatus] = useState({});
+    const [moveNumber, setMoveNumber] = useState(INITIAL_MOVE_NUMBER);
     const [waitingForVoiceCommand, setWaitingForVoiceCommand] = useState(false);
     const voiceCommandTimeout = useRef(null);
     const stopListeningRef = useRef(null);
 
     const handleLegalMove = (move) => {
         const moveDesc = parser.sanToText(move);
-        setStatus({ display: `Moved ${move}`, announce: `Moved ${moveDesc}` });
+
+        // Use batched update to prevent GameStatus from re-rendering twice
+        // (once because of the change to moveNumber and once because of the
+        // change to status), which would cause duplicate announcements
+        ReactDOM.unstable_batchedUpdates(() => {
+            setMoveNumber(n => n + 1);
+            setStatus({
+                display: `Moved ${move}`,
+                announce: `Moved ${moveDesc}`
+            });
+        });
     };
 
     const handleIllegalMove = (move) => {
@@ -100,13 +113,23 @@ const App = (props) => {
         switch (command) {
             case 'undo':
                 undo();
-                status = 'Undid last move';
-                setStatus({ display: status, announce: status });
+
+                ReactDOM.unstable_batchedUpdates(() => {
+                    status = 'Undid last move';
+                    setMoveNumber(n => n - 1);
+                    setStatus({ display: status, announce: status });
+                });
+
                 return;
             case 'reset':
                 reset();
-                status = 'Reset game';
-                setStatus({ display: status, announce: status });
+
+                ReactDOM.unstable_batchedUpdates(() => {
+                    status = 'Reset game';
+                    setMoveNumber(INITIAL_MOVE_NUMBER);
+                    setStatus({ display: status, announce: status });
+                });
+
                 return;
             default:
                 let move;
@@ -189,7 +212,7 @@ const App = (props) => {
                     >
                         {listening ? 'Listening' : 'Click to give voice command'}
                     </Button>
-                    <GameStatus {...status} />
+                    <GameStatus moveNumber={moveNumber} {...status} />
                     <MoveHistoryTable moves={history} />
                 </Col>
             </Row>
