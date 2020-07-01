@@ -7,6 +7,8 @@ it only supports human vs. human play with both players using the same browser
 (i.e. both players must be in the same room using the same computer). In the
 future it will support play over the internet.
 
+Try it out at https://speech-to-chess.com!
+
 Table of Contents
 =================
 
@@ -34,8 +36,6 @@ Table of Contents
 
 speech-to-chess currently only works in Google Chrome (on desktop and Android).
 Support for other browsers will be added in future releases.
-
-Try it out at https://speech-to-chess.com!
 
 ## How to play
 
