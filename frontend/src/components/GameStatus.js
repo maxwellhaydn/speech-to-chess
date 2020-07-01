@@ -4,23 +4,24 @@ import { useSpeechSynthesis } from 'react-speech-kit';
 
 const propTypes = {
     display: PropTypes.string,
-    announce: PropTypes.string
+    announce: PropTypes.string,
+    moveNumber: PropTypes.number,
 };
 
 /**
  * Show the current status of the game (e.g. "Black to move", "Checkmate")
  * and say it out loud with text-to-speech.
  */
-const GameStatus = ({ display, announce }) => {
+const GameStatus = ({ display, announce, moveNumber }) => {
     const { speak, voices } = useSpeechSynthesis();
     const voice = useMemo(() => {
         return voices.find(voice => voice.lang === 'en-US');
     }, [voices]);
 
-    // When status changes, say the new status out loud
+    // When status or move number changes, say the new status out loud
     useEffect(() => {
         if (announce) speak({ text: announce, voice });
-    }, [announce]);
+    }, [announce, moveNumber]);
 
     return (
         <div className="game-status">
