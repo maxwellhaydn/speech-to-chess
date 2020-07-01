@@ -35,7 +35,7 @@ const parserOptions = {
         g: ['golf', 'gulf'],
         h: ['hotel', 'stage', 'age', 'its', 'each'],
         2: ['too'],
-        4: ['force', 'for', 'far', 'park', 'store', 'fork'],
+        4: ['force', 'for', 'far', 'park', 'store', 'fork', 'ford', 'fort'],
         5: ['v', 'psi'],
         6: ['sex'],
     }
